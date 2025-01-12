@@ -37,7 +37,7 @@ func PostOrPutRequest(method string, url string, payload interface{}, errorRespo
 	req.SetBasicAuth(config.Cfg.BasicAuth.USERNAME, config.Cfg.BasicAuth.PASSWORD)
 
 	client := http.Client{
-		Timeout: 2 * time.Second,
+		Timeout: 10 * time.Second,
 	}
 
 	r, err := client.Do(req)
@@ -80,7 +80,7 @@ func GetRequest(url string, response interface{}, errorResponse interface{}) (in
 	req.SetBasicAuth(config.Cfg.BasicAuth.USERNAME, config.Cfg.BasicAuth.PASSWORD)
 
 	client := http.Client{
-		Timeout: 2 * time.Second,
+		Timeout: 10 * time.Second,
 	}
 
 	r, err := client.Do(req)
