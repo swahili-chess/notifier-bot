@@ -39,7 +39,7 @@ type Member struct {
 // It either receives from chan and update team members or ids or it fetch status of current member ids
 func (sw *SWbot) PollAndUpdateMemberStatus(membersIdsChan <-chan []lichess.MemberDB, membersIds *[]lichess.MemberDB) {
 
-	ticker := time.NewTicker(time.Second * 6)
+	ticker := time.NewTicker(time.Second * 15)
 	defer ticker.Stop()
 
 	go sw.removeExpiredGameLinks(sw.Links)
@@ -53,13 +53,44 @@ func (sw *SWbot) PollAndUpdateMemberStatus(membersIdsChan <-chan []lichess.Membe
 			}
 
 		default:
-			url := buildMemberStatusesURL(*membersIds, urlStatus)
-			if url != "" {
-				sw.fetchAndUpdateMemberStatuses(url, sw.Links)
-			}
+			sw.processMembersBatched(*membersIds)
 		}
 
 	}
+}
+
+// processMembersBatched processes member IDs in batches of 100 with 5-second intervals between batches
+func (sw *SWbot) processMembersBatched(membersIds []lichess.MemberDB) {
+	if len(membersIds) == 0 {
+		return
+	}
+
+	const batchSize = 100
+	batches := createBatches(membersIds, batchSize)
+
+	for i, batch := range batches {
+		url := buildMemberStatusesURL(batch, urlStatus)
+		if url != "" {
+			sw.fetchAndUpdateMemberStatuses(url, sw.Links)
+		}
+
+		// Wait 5 seconds between batches (except for the last batch)
+		if i < len(batches)-1 {
+			time.Sleep(5 * time.Second)
+		}
+	}
+}
+
+// createBatches splits member IDs into batches of specified size
+func createBatches(members []lichess.MemberDB, batchSize int) [][]lichess.MemberDB {
+	var batches [][]lichess.MemberDB
+	
+	for i := 0; i < len(members); i += batchSize {
+		end := min(i + batchSize, len(members))
+		batches = append(batches, members[i:end])
+	}
+	
+	return batches
 }
 
 // fetchAndUpdateMemberStatuses fetches the statuses of team members from the provided URL,
