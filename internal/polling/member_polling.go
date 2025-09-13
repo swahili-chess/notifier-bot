@@ -54,6 +54,8 @@ func (sw *SWbot) PollAndUpdateMemberStatus(membersIdsChan <-chan []lichess.Membe
 
 		default:
 			url := buildMemberStatusesURL(*membersIds, urlStatus)
+			//log url
+			slog.Info("PollAndUpdateMemberStatus: Fetching member statuses", "url", url)
 			if url != "" {
 				sw.fetchAndUpdateMemberStatuses(url, sw.Links)
 			}
