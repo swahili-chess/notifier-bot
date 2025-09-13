@@ -74,14 +74,14 @@ func (sw *SWbot) fetchAndUpdateMemberStatuses(url string, links *map[string]time
 
 	resp, err := client.Get(url)
 	if err != nil {
-		slog.Error("Error while fetching Member status details", "err", err)
+		slog.Error("fetchAndUpdateMemberStatuses: Error while fetching Member status details", "error", err)
 		return
 	}
 	defer resp.Body.Close()
 
 	err = json.NewDecoder(resp.Body).Decode(&members)
 	if err != nil {
-		slog.Error("Error decoding the json body", "err", err)
+		slog.Error("fetchAndUpdateMemberStatuses: Error decoding the json body", "error", err)
 		return
 	}
 
@@ -155,10 +155,10 @@ func (sw *SWbot) sendLinkToActiveTelegramIds(linkId string) {
 
 	statusCode, err := req.GetRequest(fmt.Sprintf("%s/telegram/bot/users/active", config.Cfg.Url), &ids, &errResponse)
 	if statusCode == http.StatusInternalServerError {
-		slog.Error("failed to get telegram bot users", "err", errResponse.Error)
+		slog.Error("sendLinkToActiveTelegramIds: Failed to get telegram bot users", "error", errResponse.Error)
 
 	} else if statusCode != http.StatusOK || err != nil {
-		slog.Error("failed to get telegram bot users", "err", err, "statusCode", statusCode)
+		slog.Error("sendLinkToActiveTelegramIds: Failed to get telegram bot users", "error", err, "statusCode", statusCode)
 	}
 	for _, id := range ids {
 		msg := tgbotapi.NewMessage(id, fmt.Sprintf("%s%s", base_url, linkId))
@@ -175,10 +175,10 @@ func (sw *SWbot) NotifyUsersOfMaintenance(msg string) {
 
 	statusCode, err := req.GetRequest(fmt.Sprintf("%s/telegram/bot/users/active", config.Cfg.Url), &ids, &errResponse)
 	if statusCode == http.StatusInternalServerError {
-		slog.Error("failed to get telegram bot users", "err", errResponse.Error)
+		slog.Error("NotifyUsersOfMaintenance: Failed to get telegram bot users", "error", errResponse.Error)
 
 	} else if statusCode != http.StatusOK || err != nil {
-		slog.Error("failed to get telegram bot users", "err", err, "statusCode", statusCode)
+		slog.Error("NotifyUsersOfMaintenance: Failed to get telegram bot users", "error", err, "statusCode", statusCode)
 
 	}
 	for _, id := range ids {

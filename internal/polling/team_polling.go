@@ -49,16 +49,16 @@ func (sw *SWbot) AddNewLichessTeamMembers(allMembers []lichess.MemberDB) {
 		for _, player := range newMembers {
 			statusCode, err := req.PostOrPutRequest(http.MethodPost, fmt.Sprintf("%s/lichess/members", config.Cfg.Url), player, &errResponse)
 			if statusCode == http.StatusInternalServerError {
-				slog.Error("Failed to insert member", "error", errResponse.Error, "url", fmt.Sprintf("%s/lichess/members", config.Cfg.Url))
+				slog.Error("AddNewLichessTeamMembers: Failed to insert member", "error", errResponse.Error, "url", fmt.Sprintf("%s/lichess/members", config.Cfg.Url))
 			} else if err != nil {
-				slog.Error("Failed to insert member", "error", err, "url", fmt.Sprintf("%s/lichess/members", config.Cfg.Url))
+				slog.Error("AddNewLichessTeamMembers: Failed to insert member", "error", err, "url", fmt.Sprintf("%s/lichess/members", config.Cfg.Url))
 			}
 		}
 	} else if statusCode == http.StatusInternalServerError {
-		slog.Error("Failed to get members", "error", errResponse.Error, "url", fmt.Sprintf("%s/lichess/members", config.Cfg.Url))
+		slog.Error("AddNewLichessTeamMembers: Failed to get members", "error", errResponse.Error, "url", fmt.Sprintf("%s/lichess/members", config.Cfg.Url))
 
 	} else {
-		slog.Error("Failed to get members", "error", err, "url", fmt.Sprintf("%s/lichess/members", config.Cfg.Url))
+		slog.Error("AddNewLichessTeamMembers: Failed to get members", "error", err, "url", fmt.Sprintf("%s/lichess/members", config.Cfg.Url))
 	}
 
 }

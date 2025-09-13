@@ -34,7 +34,7 @@ func FetchTeamMembers() []MemberDB {
 	req, err := http.NewRequest("GET", team_members_url, nil)
 
 	if err != nil {
-		slog.Error("failed to create request", "error", err)
+		slog.Error("FetchTeamMembers: Failed to create request", "error", err)
 		return dt
 	}
 
@@ -42,7 +42,7 @@ func FetchTeamMembers() []MemberDB {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		slog.Error("failed to fetch team members", "err", err)
+		slog.Error("FetchTeamMembers: Failed to fetch team members", "error", err)
 		return dt
 	}
 
@@ -58,7 +58,7 @@ func FetchTeamMembers() []MemberDB {
 
 		if err != nil {
 			if err != io.EOF {
-				slog.Error("we got an error while reading", "err", err)
+				slog.Error("FetchTeamMembers: We got an error while reading", "error", err)
 			}
 
 			break

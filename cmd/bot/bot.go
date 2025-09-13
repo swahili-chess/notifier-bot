@@ -50,13 +50,13 @@ func main() {
 	flag.Parse()
 
 	if config.Cfg.BotToken == "" || config.Cfg.Url == "" {
-		slog.Error("Bot token or API url not provided")
+		slog.Error("main: Bot token or API url not provided")
 		return
 	}
 
 	bot, err := tgbotapi.NewBotAPI(config.Cfg.BotToken)
 	if err != nil {
-		slog.Error("failed to create bot api instance", "err", err)
+		slog.Error("main: Failed to create bot api instance", "error", err)
 		return
 	}
 
@@ -78,7 +78,7 @@ func main() {
 	//Fetch from the team for the first time
 	memberIds := lichess.FetchTeamMembers()
 	if len(memberIds) == 0 {
-		slog.Error("length of player ids shouldn't be 0")
+		slog.Error("main: Length of player ids shouldn't be 0")
 	}
 	swbot.AddNewLichessTeamMembers(memberIds)
 
@@ -117,16 +117,16 @@ func main() {
 
 					statusCode, err := req.PostOrPutRequest(http.MethodPut, fmt.Sprintf("%s/telegram/bot/users", config.Cfg.Url), args, &errResponse)
 					if statusCode == http.StatusInternalServerError {
-						slog.Error("failed to update bot user", "error", errResponse.Error)
+						slog.Error("main: Failed to update bot user", "error", errResponse.Error)
 					} else if err != nil {
-						slog.Error("failed to update bot user", "error", err)
+						slog.Error("main : Failed to update bot user", "error", err)
 					}
 
 				default:
-					slog.Error("failed to insert bot user", "err", err)
+					slog.Error("main: Failed to insert bot user", "error", err)
 				}
 			} else if err != nil {
-				slog.Error("failed to insert bot user", "error", err, "statuscode", statusCode)
+				slog.Error("main: Failed to insert bot user", "error", err, "statuscode", statusCode)
 			}
 
 		case "stop":
@@ -138,9 +138,9 @@ func main() {
 
 			statusCode, err := req.PostOrPutRequest(http.MethodPut, fmt.Sprintf("%s/telegram/bot/users", config.Cfg.Url), botUser, &errResponse)
 			if statusCode == http.StatusInternalServerError {
-				slog.Error("failed to update bot user", "error", errResponse.Error)
+				slog.Error("main: Failed to update bot user", "error", errResponse.Error)
 			} else if err != nil {
-				slog.Error("failed to update bot user", "error", err)
+				slog.Error("main: Failed to update bot user", "error", err)
 			}
 
 			msg.Text = stop_txt
@@ -150,10 +150,10 @@ func main() {
 			var errResponse req.ErrorResponse
 			statusCode, err := req.GetRequest(fmt.Sprintf("%s/telegram/bot/users/active", config.Cfg.Url), &res, &errResponse)
 			if statusCode == http.StatusInternalServerError {
-				slog.Error("failed to get telegram bot users", "err", errResponse.Error)
+				slog.Error("main: Failed to get telegram bot users", "error", errResponse.Error)
 
 			} else if statusCode != http.StatusOK || err != nil {
-				slog.Error("failed to get telegram bot users", "err", err, "statusCode", statusCode)
+				slog.Error("main: Failed to get telegram bot users", "error", err, "statusCode", statusCode)
 			}
 
 			msg.Text = fmt.Sprintf("There are %d subscribers in chesswahiliBot", len(res))
@@ -188,7 +188,7 @@ func main() {
 
 		} else {
 			if _, err := swbot.Bot.Send(msg); err != nil {
-				slog.Error("failed to send msg", "err", err, "msg", msg)
+				slog.Error("main: Failed to send msg", "error", err, "msg", msg)
 			}
 		}
 
